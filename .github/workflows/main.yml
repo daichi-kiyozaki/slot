@@ -4,7 +4,7 @@ on: [push, delete]
 
 jobs:
   to_codecommit:                                        # <-- different jobs are executed in parallel.
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v3
         with:
