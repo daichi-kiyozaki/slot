@@ -6,7 +6,35 @@ jobs:
   to_codecommit:                                        # <-- different jobs are executed in parallel.
     runs-on: ubuntu-24.04
     steps:
+      - name: Install Dependencies
+        run: |
+          sudo apt-get install graphviz
+          sudo apt-get install plantuml
+
       - uses: actions/checkout@v1
+
+      - name: Process Diagrams
+        run: |
+          ls -a
+          cd puml
+          for file in $(find . -name "*.puml"); do
+            java -jar plantuml-1.2024.5.jar -svg "$file" -charset UTF-8
+          done
+
+      - name: push diff
+        run: |
+          pwd
+          git init
+          git remote set-url origin https://github.com/daichi-kiyozaki/test_svg_create.git
+          git config --global user.email "daichi_kiyozaki@nuco.co.jp"
+          git config --global user.name "daichi-kiyozaki"
+          git add .
+          git status
+          git commit -m "GitHub Actions から差分を Push"
+          git push origin master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: pixta-dev/repository-mirroring-action@v1
         with:
           target_repo_url:
